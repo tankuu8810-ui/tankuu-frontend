@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>譚空 -- 近現代怪談・奇談データベース</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+
+  :root{
+    --ink:      #1c2333;   /* 深い藍色（表紙の色） */
+    --ink-2:    #262f45;
+    --washi:    #f4efe4;   /* 和紙のクリーム */
+    --washi-2:  #ece4d2;
+    --hanko:    #b3452f;   /* 印朱・朱肉の赤 */
+    --hanko-dim:#8a3623;
+    --gold:     #b9975a;   /* 箔押しの金 */
+    --line:     rgba(28,35,51,0.14);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--washi);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    background-image:
+      radial-gradient(rgba(28,35,51,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+
+  /* ---------- ヘッダー ---------- */
+  header{
+    background: var(--ink);
+    color: var(--washi);
+    padding: 30px 24px 26px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 27px, rgba(244,239,228,0.035) 27px 28px);
+    pointer-events:none;
+  }
+  .header-inner{
+    max-width: 920px; margin: 0 auto;
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap: 16px; flex-wrap: wrap;
+    position: relative;
+  }
+  .brand{ display:flex; align-items:baseline; gap:14px; }
+  .brand .seal{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:40px; height:40px; border:1.5px solid var(--hanko);
+    color: var(--hanko); font-family:'Shippori Mincho', serif;
+    font-size:17px; border-radius:3px; flex:none;
+    transform: rotate(-2deg);
+  }
+  h1{
+    font-family:'Shippori Mincho', serif;
+    font-weight:700;
+    font-size: 30px;
+    letter-spacing: 0.08em;
+    margin:0;
+  }
+  .tagline{
+    font-family:'Shippori Mincho', serif;
+    font-size:13px;
+    color: rgba(244,239,228,0.6);
+    letter-spacing: 0.05em;
+  }
+  .stat{
+    font-size: 12px;
+    color: rgba(244,239,228,0.55);
+    letter-spacing: 0.05em;
+  }
+  .stat b{ color: var(--gold); font-weight:500; font-size:14px; }
+
+  main{ max-width: 920px; margin: 0 auto; padding: 34px 24px 80px; }
+
+  /* ---------- 検索フォーム ---------- */
+  .search-panel{
+    background: var(--washi);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(28,35,51,0.05), 0 12px 28px -18px rgba(28,35,51,0.35);
+    padding: 22px 24px 20px;
+  }
+  .search-row{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+  }
+  .search-row label{
+    font-family:'Shippori Mincho', serif;
+    font-size: 13px; color: var(--ink-2); flex: none;
+    letter-spacing: 0.04em;
+  }
+  input[type="text"]{
+    flex:1; min-width: 160px;
+    padding: 11px 14px;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius: 3px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+  }
+  input[type="text"]:focus{
+    outline: 2px solid var(--hanko);
+    outline-offset: 1px;
+  }
+  .btn{
+    padding: 11px 22px;
+    border: none;
+    border-radius: 3px;
+    font-family:'Shippori Mincho', serif;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    background: var(--ink);
+    color: var(--washi);
+  }
+  .btn:hover{ background: var(--ink-2); }
+  .search-note{
+    margin-top: 12px; font-size: 12px; color: #8a8574;
+  }
+
+  /* ---------- 結果件数 ---------- */
+  .result-meta{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin: 30px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .result-meta .count{
+    font-family:'Shippori Mincho', serif;
+    font-size: 15px;
+  }
+  .result-meta .count b{ color: var(--hanko); font-size: 20px; font-weight:700; }
+  .result-meta .note{ font-size: 12px; color:#8a8574; }
+
+  /* ---------- カード（情報カードを模したリスト） ---------- */
+  .card-list{ display:flex; flex-direction:column; gap:14px; }
+
+  .kaidan-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-left: 3px solid var(--hanko);
+    border-radius: 2px;
+    padding: 16px 20px 15px;
+    position: relative;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .kaidan-card:hover{
+    transform: translateX(2px);
+    box-shadow: 6px 6px 0 -4px rgba(28,35,51,0.08);
+  }
+  .card-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap: 10px; flex-wrap:wrap;
+  }
+  .card-no{
+    font-size:11px; color:#a89f8c; letter-spacing:0.05em;
+    font-variant-numeric: tabular-nums;
+  }
+  .card-title{
+    font-family:'Shippori Mincho', serif;
+    font-size: 17px; font-weight:700;
+    margin: 4px 0 8px;
+    color: var(--ink);
+  }
+  .card-meta{
+    display:flex; flex-wrap:wrap; gap:7px; margin-bottom: 10px;
+  }
+  .tag{
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+  }
+  .tag-kaii{ background: rgba(179,69,47,0.1); color: var(--hanko-dim); border:1px solid rgba(179,69,47,0.25); }
+  .tag-place{ background: rgba(28,35,51,0.06); color: var(--ink-2); }
+  .tag-period{ background: rgba(185,151,90,0.14); color: #8a6d33; }
+
+  .card-summary{
+    font-size: 13.5px; line-height: 1.85; color: #3a3f4d;
+    margin-bottom: 10px;
+  }
+  .card-source{
+    font-size: 12px; color:#8a8574;
+    border-top: 1px dashed var(--line);
+    padding-top: 8px;
+  }
+
+  footer{
+    text-align:center; padding: 30px 24px 50px;
+    font-size: 11.5px; color:#a89f8c;
+  }
+
+  @media (max-width: 600px){
+    h1{ font-size:24px; }
+    .search-row{ flex-direction:column; align-items:stretch; }
+    .search-row label{ margin-bottom: -4px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="seal">譚</span>
+      <div>
+        <h1>譚空 <span style="font-size:14px; opacity:.55;">たんくう</span></h1>
+        <div class="tagline">近現代怪談・奇談データベース（開発中プレビュー）</div>
+      </div>
+    </div>
+    <div class="stat">収録件数 <b>25,000+</b> 件（見本表示）</div>
+  </div>
+</header>
+
+<main>
+
+  <div class="search-panel">
+    <div class="search-row">
+      <label for="q1">キーワード</label>
+      <input type="text" id="q1" value="狐" placeholder="例：狐、幽霊、河童…">
+      <button class="btn" id="searchBtn">検索する</button>
+    </div>
+    <div class="search-note">※ 現在はダミーデータのみを表示しています。本番のデータベースとはまだ接続されていません。</div>
+  </div>
+
+  <div class="result-meta">
+    <div class="count"><b id="resultCount">3</b> 件がヒットしました</div>
+    <div class="note">並び替え：No.順</div>
+  </div>
+
+  <div class="card-list" id="cardList">
+    <!-- カードはJSで描画します -->
+  </div>
+
+</main>
+
+<footer>tankuu kaidan-search — preview build（Cloudflare Pages）</footer>
+
+<script>
+  // ダミーデータ（本番ではAPIから取得する想定）
+  const mockData = [
+    {
+      no: "08421",
+      title: "村はずれの祠に化けた老狐",
+      kaii: "動物の怪―狐",
+      place: "山",
+      period: "明治",
+      summary: "村外れの古い祠に住み着いた老狐が、夜な夜な旅人の前に僧侶の姿で現れ、道を誤らせたという話。後に猟師が正体を見破り、以後は姿を見せなくなったと伝えられる。",
+      source: "『地方新聞』明治24年3月／某県某郡"
+    },
+    {
+      no: "14903",
+      title: "狐火の橋",
+      kaii: "動物の怪―狐",
+      place: "道",
+      period: "大正",
+      summary: "雨の夜、橋のたもとに青白い火が並んで揺れ、渡ろうとする者を惑わせたという話。地元では古くから狐の仕業とされ、遠回りする者が多かったという。",
+      source: "『郷土研究』第3巻／某地方"
+    },
+    {
+      no: "21077",
+      title: "電話に出た「狐」",
+      kaii: "正体不明",
+      place: "家屋",
+      period: "昭和（戦後）",
+      summary: "深夜にかかってきた無言電話の背後で、獣のような甲高い声が聞こえたという投稿。読者は狐の仕業ではないかと推測しているが、テキスト内で正体は明示されていない。",
+      source: "『実話雑誌』1978年10月号　読者投稿欄"
+    }
+  ];
+
+  function renderCards(data){
+    const list = document.getElementById('cardList');
+    document.getElementById('resultCount').textContent = data.length;
+    list.innerHTML = data.map(item => `
+      <div class="kaidan-card">
+        <div class="card-top">
+          <div class="card-no">No.${item.no}</div>
+        </div>
+        <div class="card-title">${item.title}</div>
+        <div class="card-meta">
+          <span class="tag tag-kaii">■${item.kaii}</span>
+          <span class="tag tag-place">${item.place}</span>
+          <span class="tag tag-period">${item.period}</span>
+        </div>
+        <div class="card-summary">${item.summary}</div>
+        <div class="card-source">出典：${item.source}</div>
+      </div>
+    `).join('');
+  }
+
+  renderCards(mockData);
+
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    // 本番ではここでAPIにリクエストを送ります。今はダミー表示のままにします。
+    renderCards(mockData);
+  });
+</script>
+
+</body>
+</html>
